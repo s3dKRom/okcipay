@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 's3d_okcipay',
         'USER': 's3d',
-        'PASSWORD': '',
+        'PASSWORD': '0ga54V602eVSB0FQx5r3pu2F',
         'HOST': 'postgresql-s3d.alwaysdata.net', # Set to empty string for localhost.
         'PORT': '5432', # Set to empty string for default.
 
