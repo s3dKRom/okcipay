@@ -7,7 +7,7 @@ class Currencies(models.Model):
         db_table = 'currencies'
     code_currency = models.DecimalField(max_digits=3, decimal_places=0)
     currency_int = models.CharField(max_length=3)
-    currency_loc = models.CharField(max_length=25)
+    currency_loc = models.CharField(max_length=55)
 
 class Banks(models.Model):
     class Meta():
@@ -53,7 +53,7 @@ class Balances(models.Model):
 class Users_Accounts(models.Model):
     class Meta():
         db_table = 'users_accounts'
-    id_users = models.ForeignKey(Users)
+    id_user = models.ForeignKey(Users)
     id_account = models.ForeignKey(Accounts)
     access_mode = models.BooleanField()
 

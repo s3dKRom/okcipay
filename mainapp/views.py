@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.contrib import auth
 from django.template.context_processors import csrf
-from mainapp.models import Accounts, Users_Accounts, Balances, Documents, Currencies, Banks, Users
+from mainapp.models import Accounts, Users_Accounts, Balances, Documents, Currencies, Banks, Users, Clients
 from datetime import date, datetime
 from django.utils import formats
 
@@ -16,14 +16,16 @@ def accounts(request):
 
     args['username'] = auth.get_user(request).username
     if auth.get_user(request).is_superuser:
-        accounts = Accounts.objects.all()
+        accounts = Accounts.objects.filter(id_bank=27)   
     else:
-        user = Users.objects.get(code=args['username'])
-        accounts = Accounts.objects.filter(users_accounts__id_client=user)
+        user = Users.objects.get(name=args['username'])        
+        accounts = Accounts.objects.filter(users_accounts__id_user=user)               
     for account in accounts:
         account.balance = '{:.2f}'.format(float(Balances.objects.filter(id_account=account.id).latest('dt').balance) / 100.00)
-        account.currency = Currencies.objects.get(code_currency=account.currency)
-    args['accounts'] = accounts
+        account.currency_int = Currencies.objects.get(id=account.id_currency.id).currency_int
+        account.currency_loc = Currencies.objects.get(id=account.id_currency.id).currency_loc
+    args['accounts'] = accounts    
+    
     return render_to_response('accounts.html', args)
 
 def account(request, id_account):
@@ -38,10 +40,15 @@ def account(request, id_account):
     args['start_dt'] = start_dt
     args['end_dt'] = end_dt
 
-    documents = Documents.objects.filter(id_account=id_account).filter(dt__gte=start_dt)
+    documents = Documents.objects.filter(id_account_a=id_account).filter(dt__gte=start_dt)
     for document in documents:
+        id_account_contragent = document.id_account_b.id        
+            
         document.amount = '{:.2f}'.format(float(document.amount) / 100.00)
-
+        document.account_contragent = Accounts.objects.get(id=id_account_contragent).number
+        document.title_contragent = Accounts.objects.get(id=id_account_contragent).id_client.title
+        document.ident_contragent = Accounts.objects.get(id=id_account_contragent).id_client.ident_num
+        document.code_bank_contragent = Accounts.objects.get(id=id_account_contragent).id_bank.code_bank
 
     args['documents'] = documents
     args['account'] = Accounts.objects.get(id=id_account)
@@ -55,11 +62,9 @@ def doc(request, id):
     args.update(csrf(request))
     document = Documents.objects.get(id=id)
     document.words_amount = convert_num2text(document.amount)
-    document.amount = '{:.2f}'.format(float(document.amount) / 100.00)
-    document.dt = datetime.strptime(document.dt, '%Y-%m-%d')
-    document.dt_bank = datetime.strptime(document.dt_bank, '%Y/%m/%d %H:%M:%S')
-    document.bank_name_a = Banks.objects.get(code_bank=document.code_bank_a).bank_name
-    document.bank_name_b = Banks.objects.get(code_bank=document.code_bank_b).bank_name
+    document.amount = '{:.2f}'.format(float(document.amount) / 100.00)    
+    #document.bank_name_a = Accounts.objects.get(id=id_account_a).id_bank.bank_name
+    #document.bank_name_b = Accounts.objects.get(id=id_account_b).id_bank.bank_name
     args['document'] = document
     args['username'] = auth.get_user(request).username
     return render_to_response('doc.html', args)
