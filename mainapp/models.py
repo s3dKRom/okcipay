@@ -19,13 +19,14 @@ class Clients(models.Model):
     class Meta():
         db_table = 'clients'
     title = models.CharField(max_length=255)
-    ident_num = models.CharField(max_length=10)
+    ident_num = models.CharField(max_length=15)
 
 
 class Accounts(models.Model):
     class Meta():
         db_table = 'accounts'
     number = models.CharField(max_length=14)
+    title_account = models.CharField(max_length=255)
     id_bank = models.ForeignKey(Banks)
     id_currency = models.ForeignKey(Currencies)
     id_client = models.ForeignKey(Clients)
@@ -37,6 +38,7 @@ class Users(models.Model):
     name = models.CharField(max_length=255)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    by_patronymic = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
@@ -61,11 +63,15 @@ class Users_Accounts(models.Model):
 class Documents(models.Model):
     class Meta():
         db_table = 'documents'
+        ordering = ['dt_bank']
     docnum = models.CharField(max_length=10)
     dt = models.DateTimeField()
     dt_bank = models.DateTimeField()
-    id_account_a = models.ForeignKey(Accounts, related_name='account_a')
-    id_account_b = models.ForeignKey(Accounts, related_name='account_b')
+    id_account_a = models.ForeignKey(Accounts)    
+    title_b = models.CharField(max_length=255)
+    ident_num_b = models.CharField(max_length=15)
+    account_b = models.CharField(max_length=14)
+    id_bank_b = models.ForeignKey(Banks)
     kind = models.DecimalField(max_digits=2, decimal_places=0, null=True)
     purpose = models.TextField()
     amount = models.DecimalField(max_digits=16, decimal_places=0, null=True)

@@ -55,13 +55,13 @@
                         <div style="display: table-cell; width: 25%; text-align: right; border: 2px solid black">{{document.id_account_a.number}}</div>
                     </div>
                     <div style="display: table-row">
-                        <div style="display: table-cell; width: 20%; text-align: left; ">Отримувач {{document.id_account_b.id_client.title}}</div>
+                        <div style="display: table-cell; width: 20%; text-align: left; ">Отримувач {{document.title_b}}</div>
                         <div style="display: table-cell; width: 80%; text-align: left;"></div>
 
                     </div>
                     <div style="display: table-row">
                         <div style="display: table-cell; width: 20%; text-align: left;">Код</div>
-                        <div style="display: table-cell; width: 20%; text-align: right; border: 2px solid black;">{{document.id_account_b.id_client.ident_num}}</div>
+                        <div style="display: table-cell; width: 20%; text-align: right; border: 2px solid black;">{{document.ident_num_b}}</div>
                         <div style="display: table-cell"></div>
                     </div>
                     <div style="display: table-row">
@@ -72,11 +72,11 @@
                     <div style="display: table-row">
                         <div style="display: table-cell; width: 60%; text-align: left; ">Банк отримувача</div>
                         <div style="display: table-cell; width: 15%; text-align: center;">код банку</div>
-                        <div style="display: table-cell; width: 25%; text-align: right; border: 2px solid black">{{document.id_account_b.number}}</div>
+                        <div style="display: table-cell; width: 25%; text-align: right; border: 2px solid black">{{document.account_b}}</div>
                     </div>
                     <div style="display: table-row">
-                        <div style="display: table-cell; width: 60%; text-align: left;  border-bottom: 2px solid black">{{document.id_account_b.id_bank.bank_name}}</div>
-                        <div style="display: table-cell; width: 15%; text-align: center; border: 2px solid black">{{document.id_account_b.id_bank.code_bank}}</div>
+                        <div style="display: table-cell; width: 60%; text-align: left;  border-bottom: 2px solid black">{{document.id_bank_b.bank_name}}</div>
+                        <div style="display: table-cell; width: 15%; text-align: center; border: 2px solid black">{{document.id_bank_b.code_bank}}</div>
                         <div style="display: table-cell; width: 25%; text-align: right; border: 2px solid black">{{document.account_c}}</div>
                     </div>
                 </div>

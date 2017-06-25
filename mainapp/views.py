@@ -5,6 +5,8 @@ from django.template.context_processors import csrf
 from mainapp.models import Accounts, Users_Accounts, Balances, Documents, Currencies, Banks, Users, Clients
 from datetime import date, datetime
 from django.utils import formats
+from django.db.models import Sum
+
 
 # Create your views here.
 def start(request):
@@ -32,7 +34,7 @@ def account(request, id_account):
     args = {}
     args.update(csrf(request))
     dt_now = datetime.now(tz=None)
-    start_dt = end_dt = formats.date_format(dt_now, "Y-m-d")
+    start_dt = end_dt = formats.date_format(dt_now, "d.m.Y")
     args['dt_now'] = dt_now
     if request.method == 'POST':
         start_dt = request.POST['start_dt']
@@ -40,21 +42,46 @@ def account(request, id_account):
     args['start_dt'] = start_dt
     args['end_dt'] = end_dt
 
-    documents = Documents.objects.filter(id_account_a=id_account).filter(dt__gte=start_dt)
-    for document in documents:
-        id_account_contragent = document.id_account_b.id        
-            
-        document.amount = '{:.2f}'.format(float(document.amount) / 100.00)
-        document.account_contragent = Accounts.objects.get(id=id_account_contragent).number
-        document.title_contragent = Accounts.objects.get(id=id_account_contragent).id_client.title
-        document.ident_contragent = Accounts.objects.get(id=id_account_contragent).id_client.ident_num
-        document.code_bank_contragent = Accounts.objects.get(id=id_account_contragent).id_bank.code_bank
+    docs_start_dt = datetime.strptime(start_dt, "%d.%m.%Y")
+    docs_end_dt = datetime.strptime(end_dt, "%d.%m.%Y")
+
+    if docs_start_dt < datetime.strptime("02.01.2016", "%d.%m.%Y"):
+        docs_start_dt = datetime.strptime("02.01.2016", "%d.%m.%Y")
+    if docs_end_dt < datetime.strptime("02.01.2016", "%d.%m.%Y"):
+        docs_end_dt = datetime.strptime("02.01.2016", "%d.%m.%Y")
+
+    documents = Documents.objects.filter(id_account_a=id_account).filter(dt__gte=docs_start_dt).filter(dt__lte=docs_end_dt)
+    
+
+    for document in documents:            
+        document.amount = '{:.2f}'.format(float(document.amount) / 100.00)        
+        document.code_bank_b = document.id_bank_b.code_bank
 
     args['documents'] = documents
     args['account'] = Accounts.objects.get(id=id_account)
 
     args['username'] = auth.get_user(request).username
     args['balance'] = '{:.2f}'.format(float(Balances.objects.filter(id_account=id_account).latest('dt').balance) / 100.00)
+    args['balance_in'] = '{:.2f}'.format(float(Balances.objects.filter(id_account=id_account).filter(dt__lt = docs_start_dt).latest('dt').balance) / 100.00)
+    args['balance_out'] = '{:.2f}'.format(float(Balances.objects.filter(id_account=id_account).filter(dt__lte = docs_end_dt).latest('dt').balance) / 100.00)
+    
+    args['transactions'] = documents.count()
+    args['transactions_debit'] = documents.filter(debit_credit= 'True').count()
+    args['transactions_credit'] = documents.filter(debit_credit= 'False').count()
+    if documents.count() == 0:
+        args['balance_debit'] = args['balance_credit'] = 0
+        return render_to_response('account.html', args)
+
+    args['balance_debit'] = '{:.2f}'.format(0)
+    args['balance_credit'] = '{:.2f}'.format(0)        
+    balance_debit = documents.filter(debit_credit= 'True').aggregate(suma = Sum('amount')).get('suma', '0')
+    balance_credit = documents.filter(debit_credit= 'False').aggregate(suma = Sum('amount')).get('suma', '0')
+    if balance_debit:
+        args['balance_debit'] = '{:.2f}'.format(float(balance_debit) / 100.00)
+    if balance_credit:
+        args['balance_credit'] = '{:.2f}'.format(float(balance_credit) / 100.00)
+    
+
     return render_to_response('account.html', args)
 
 def doc(request, id):

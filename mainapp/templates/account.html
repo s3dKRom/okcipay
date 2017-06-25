@@ -8,18 +8,77 @@
     <li><a href="/account/{{account.id}}">Рахунок №{{ account.number }}</a></li>
 </ol>
 <hr />
+
+<div id="datepicker"></div>
+
+
+ 
 <div class="large-offset-1 large-11 columns">
     <h4> Мій Рахунок: {{ account.number }} </h4>
+    <p> Назва рахунку: {{ account.title_account }} </p>
     <p> Залишок на рахунку: {{ balance }} грн</p>
     <p> Дата: {{ dt_now }} </p>
-    <form action="/account/{{account.id}}/" method="post">
+    <form name="rangeDate" action="/account/{{account.id}}/" method="post" onsubmit="return validate()">
         {% csrf_token %}
+
+
+
         <hr />
         <p style = "text-align: center">Відомості по рахунку за період</p>
-        <p style = "text-align: center"> з: <input type="date" name="start_dt" value = "{{ start_dt }}" max = "{{ end_dt }}">
-        до: <input type="date" name="end_dt" value = "{{ end_dt }}" min = "{{ start_dt }}"></p>
-        <p style = "text-align: center"><input type="submit" value="Показати"></p>
+        <p style = "text-align: center">
+            <label for="from">з</label>
+            <input type="text" id="from" name="start_dt" value = "{{ start_dt }}" >
+            
+            <label for="to">до</label>
+            <input type="text" id="to" name="end_dt" value = "{{ end_dt }}" >
+        </p>
+        <p id="submit" style = "text-align: center"><input type="submit" value="Показати"></p>
+        <!--<p style = "text-align: center">
+            <label for="today">сьогодні</label>
+            <input type="radio" id="today" name="rangeofdate" value = "today" checked>
+            <label for="yesterday">вчора</label>
+            <input type="radio" id="today" name="rangeofdate" value = "yesterday">
+            <label for="7days">останні 7 днів</label>
+            <input type="radio" id="7days" name="rangeofdate" value = "7days">
+            <label for="month">місяць</label>
+            <input type="radio" id="month" name="rangeofdate" value = "month">
+            <label for="3months">квартал</label>
+            <input type="radio" id="3months" name="rangeofdate" value = "3months">
+            <label for="range">період</label>
+            <input type="radio" id="range" name="rangeofdate" value = "range">
+        </p>
+        
+    <p><input type="submit" value="Отправить"></p> --!>
+
     </form>
+    <hr />
+
+    <p> Всього операцій: {{ transactions }} </p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="100"></th>
+                <th width="100"></th>                
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Вхідний залишок: {{ balance_in }} грн</td>
+                <td>Вихідний залишок: {{ balance_out }} грн</td>                
+            </tr>
+            <tr>
+                <td>Оборот по дебету: {{ balance_debit }} грн</td>
+                <td>Операцій по дебету: {{ transactions_debit }}</td>                
+            </tr><tr>
+                <td>Оборот по кредиту: {{ balance_credit }} грн</td>
+                <td>Операцій по кредиту: {{ transactions_credit }}</td>                
+            </tr>            
+        </tbody>
+    </table>
+
+   
+
     <hr />
     {% if documents %}
     <table class="table table-condensed table-striped">
@@ -40,14 +99,14 @@
                 <td>{{document.dt}}</td>
                 <td><a href="/account/docs/{{document.id}}">{{document.docnum}}</a></td>
                 <td>
-                    {{document.title_contragent}}
+                    {{document.title_b}}
                     <br/>
                     <br/>
-                    ЄДРПОУ: {{document.ident_contragent}}
+                    ЄДРПОУ: {{document.ident_num_b}}
                     <br/>
-                    Код банку: {{document.code_bank_contragent}}
+                    Код банку: {{document.code_bank_b}}
                     <br/>
-                    Рахунок: {{document.account_contragent}}
+                    Рахунок: {{document.account_b}}
                 </td>
                 <td>{{document.kind}}</td>
                 <td>{{document.purpose}}</td>
