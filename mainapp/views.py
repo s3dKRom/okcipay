@@ -37,8 +37,11 @@ def account(request, id_account):
     start_dt = end_dt = formats.date_format(dt_now, "d.m.Y")
     args['dt_now'] = dt_now
     if request.method == 'POST':
-        start_dt = request.POST['start_dt']
-        end_dt = request.POST['end_dt']
+        request.session['start_dt'] = request.POST['start_dt']
+        request.session['end_dt'] = request.POST['end_dt']
+    if request.session['start_dt']:
+        start_dt = request.session['start_dt']
+        end_dt = request.session['end_dt']
     args['start_dt'] = start_dt
     args['end_dt'] = end_dt
 
@@ -94,6 +97,8 @@ def doc(request, id):
     #document.bank_name_b = Accounts.objects.get(id=id_account_b).id_bank.bank_name
     args['document'] = document
     args['username'] = auth.get_user(request).username
+    args['start_dt'] = request.session['start_dt']
+    args['end_dt'] = request.session['end_dt']
     return render_to_response('doc.html', args)
 
 def doc2pdf(request, id):
@@ -246,3 +251,4 @@ def convert_number_under_1000_2_text(number):
 
 
     return result
+
