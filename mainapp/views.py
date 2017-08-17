@@ -97,8 +97,6 @@ def doc(request, id):
     #document.bank_name_b = Accounts.objects.get(id=id_account_b).id_bank.bank_name
     args['document'] = document
     args['username'] = auth.get_user(request).username
-    args['start_dt'] = request.session['start_dt']
-    args['end_dt'] = request.session['end_dt']
     return render_to_response('doc.html', args)
 
 def doc2pdf(request, id):
