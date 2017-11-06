@@ -39,7 +39,7 @@ def account(request, id_account):
     if request.method == 'POST':
         request.session['start_dt'] = request.POST['start_dt']
         request.session['end_dt'] = request.POST['end_dt']
-    if request.session['start_dt']:
+    # if request.session['start_dt']:
         start_dt = request.session['start_dt']
         end_dt = request.session['end_dt']
     args['start_dt'] = start_dt
