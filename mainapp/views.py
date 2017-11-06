@@ -42,6 +42,7 @@ def account(request, id_account):
     if request.session['start_dt']:
         start_dt = request.session['start_dt']
         end_dt = request.session['end_dt']
+        усе =
     args['start_dt'] = start_dt
     args['end_dt'] = end_dt
 
