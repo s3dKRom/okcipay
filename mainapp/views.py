@@ -36,10 +36,10 @@ def account(request, id_account):
     dt_now = datetime.now(tz=None)
     start_dt = end_dt = formats.date_format(dt_now, "d.m.Y")
     args['dt_now'] = dt_now
-    if request.method == 'POST':
+    if request.method == 'POST' :
         request.session['start_dt'] = request.POST['start_dt']
         request.session['end_dt'] = request.POST['end_dt']
-    # if request.session['start_dt']:
+    if request.session['start_dt']:
         start_dt = request.session['start_dt']
         end_dt = request.session['end_dt']
     args['start_dt'] = start_dt
